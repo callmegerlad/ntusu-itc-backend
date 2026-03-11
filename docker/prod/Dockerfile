@@ -19,4 +19,4 @@ COPY . /project/
 RUN python manage.py migrate
 RUN python manage.py collectstatic --noinput
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "config.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "SUITC_Backend.wsgi:application"]
