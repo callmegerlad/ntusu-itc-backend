@@ -136,7 +136,7 @@ WSGI_APPLICATION = "SUITC_Backend.wsgi.application"
     defaulted to use the original sqlite3 file.
 """
 
-NAME = os.environ.get('POSTGRES_NAME')
+DB_NAME = os.environ.get('DB_NAME')
 PROD = bool(os.environ.get('PROD', 0))
 
 ALLOWED_HOSTS = []
@@ -152,18 +152,7 @@ if PROD:
         DEBUG = True
 
 
-if NAME:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_NAME'),
-            'USER': os.environ.get('POSTGRES_USER'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-            'HOST': 'db',
-            'PORT': 5432,
-        }
-    }
-elif PROD:
+if DB_NAME:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
