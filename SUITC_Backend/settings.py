@@ -138,12 +138,16 @@ WSGI_APPLICATION = "SUITC_Backend.wsgi.application"
 
 DB_NAME = os.environ.get('DB_NAME')
 PROD = bool(os.environ.get('PROD', 0))
+PROD_HOST = os.environ.get('PROD_HOST')
 
 ALLOWED_HOSTS = []
 if PROD:
     ALLOWED_HOSTS += ['ntusu-itc-backend.ap-southeast-1.elasticbeanstalk.com']
     ALLOWED_HOSTS += ['backend.ntusu.org']
-    ALLOWED_HOSTS += [os.environ.get('PROD_HOST')]
+    if PROD_HOST:
+        normalized_prod_host = PROD_HOST.replace('https://', '').replace('http://', '').rstrip('/')
+        ALLOWED_HOSTS += [normalized_prod_host]
+        CSRF_TRUSTED_ORIGINS += [f'https://{normalized_prod_host}']
 else:
     ALLOWED_HOSTS += ['0.0.0.0', 'localhost', '127.0.0.1']
 
