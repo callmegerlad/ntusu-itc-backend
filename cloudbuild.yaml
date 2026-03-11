@@ -4,21 +4,21 @@ steps:
     args: 
       - 'build'
       - '-t'
-      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}:latest'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_SERVICE_NAME}:latest'
       - '-f'
       - 'docker/prod/Dockerfile'
       - '.'
 
   # Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}:latest']
+    args: ['push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_SERVICE_NAME}:latest']
 
   # Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
       'run', 'deploy', '${_SERVICE_NAME}', 
-      '--image', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}:latest', 
+      '--image', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_SERVICE_NAME}/${_SERVICE_NAME}:latest', 
       '--region', '${_REGION}', 
       '--platform', 'managed', 
       '--allow-unauthenticated'
