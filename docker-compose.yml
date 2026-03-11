@@ -2,13 +2,16 @@ version: '3.9'
 services:
   db:
     container_name: SUITC_Database
-    image: postgres
+    image: mysql:8.0
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./data/db:/var/lib/mysql
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - MYSQL_DATABASE=suitc
+      - MYSQL_USER=suitc_user
+      - MYSQL_PASSWORD=suitc_password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    ports:
+      - "3306:3306"
   web:
     build:
       context: .
@@ -21,9 +24,10 @@ services:
     ports:
       - "8888:8888"
     environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - DB_NAME=suitc
+      - DB_USER=suitc_user
+      - DB_PASSWORD=suitc_password
+      - DB_HOST=db
     depends_on:
       - db
 volumes:
