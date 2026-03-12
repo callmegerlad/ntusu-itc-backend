@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./docs/static/logo.webp" style="background-color:white;padding:1rem;border-radius:1rem;" alt="NTUSU ITC logo" width="75">
+  <img src="./docs/static/logo.png" alt="NTUSU logo" width="100">
   <h1>NTUSU ITC Backend</h1>
   <p style="font-size:16px;font-weight:normal;">Backend repository for NTUSU ITC Portal</p>
 </div>
