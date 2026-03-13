@@ -19,7 +19,7 @@
 
 NTUSU ITC Backend is the server-side application powering the NTUSU ITC Portal. Built with Django REST Framework, it provides APIs and core business logic for modules such as authentication, ULocker, events, and other student-facing services.
 
-This repository supports both **local development** and **production deployment**, with a containerised development workflow and a cloud-based production architecture spanning **Google Cloud Platform** and **AWS**. 
+This repository supports both **local development** and **production deployment**, with a containerised development workflow and a cloud-based production architecture spanning **Google Cloud Platform** and **Amazon Web Services**. 
 
 The project is currently maintained by the **NTUSU ITC team**.
 
@@ -197,13 +197,13 @@ See some of the manual documentations here:
 
 ## Production Deployment
 
-Production is deployed to Google Cloud Run through Cloud Build, as configured through `cloudbuild.yaml`.
+Production is deployed to **Google Cloud Run** through **Cloud Build**, as configured through `cloudbuild.yaml`.
 
 ### Deployment flow
 
-1. Build image using `docker/prod/Dockerfile`, retrieving static files from S3
-2. Push image to Artifact Registry
-3. Deploy the latest artifact from Artifact Registry to Cloud Run as a revision
+1. Build image using `docker/prod/Dockerfile`, retrieving static files from **Amazon S3**
+2. Push image to **Artifact Registry**
+3. Deploy the latest artifact from Artifact Registry to **Cloud Run** as a revision
 
 ### Required environment variables
 
