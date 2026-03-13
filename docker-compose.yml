@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   db:
     container_name: SUITC_Database
@@ -12,6 +11,11 @@ services:
       - MYSQL_ROOT_PASSWORD=rootpassword
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-usuitc_user", "-psuitc_password"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
   web:
     build:
       context: .
@@ -29,7 +33,8 @@ services:
       - DB_PASSWORD=suitc_password
       - DB_HOST=db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 volumes:
   data:
     
