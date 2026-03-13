@@ -40,7 +40,7 @@ pytz==2022.5
 requests==2.32.5
 ruamel.yaml==0.17.21
 s3transfer==0.13.0
-setuptools==76.0.0
+setuptools==78.1.1
 six==1.16.0
 soupsieve==2.3.2.post1
 sqlparse==0.5.4
