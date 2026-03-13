@@ -14,9 +14,15 @@
 </p>
 </div>
 
+
 ## Introduction
 
 NTUSU ITC Backend is the server-side application powering the NTUSU ITC Portal. Built with Django REST Framework, it provides APIs and core business logic for modules such as authentication, ULocker, events, and other student-facing services.
+
+This repository supports both **local development** and **production deployment**, with a containerised development workflow and a cloud-based production architecture spanning **Google Cloud Platform** and **AWS**. 
+
+The project is currently maintained by the **NTUSU ITC team**.
+
 
 ## System Overview
 
@@ -24,6 +30,9 @@ NTUSU ITC Backend is the server-side application powering the NTUSU ITC Portal. 
 
 ![System Architecture Diagram for NTUSU-ITC Backend](./docs/static/NTUSU_ITC-System_Achitecture.png "System Architecture Diagram")
 
+The application is deployed as a containerised backend service on **Google Cloud Run**. Production traffic is routed through **Amazon Route 53** to **Cloud Run** via custom **Domain Mapping**, while backend data is stored in **Google Cloud SQL for MySQL**. Outbound email functionality is handled through **Amazon SES**.
+
+A **Cloud Build** pipeline is connected to this GitHub repository to automate image builds and deployments to **Google Artifact Registry** and **Cloud Run**. Static files are located in **Amazon S3** and are retrieved during the Docker image build process.
 
 ### Tech Stack
 
@@ -37,18 +46,24 @@ NTUSU ITC Backend is the server-side application powering the NTUSU ITC Portal. 
 ![Tech Stack (Database)](https://img.shields.io/badge/database%3A-222222?style=for-the-badge) &nbsp; ![MySQL Badge](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&labelColor=222222)
 
 
-
 ## Getting Started
 
-This section will guide you through setting up the project on your local machine to begin contributing to development!
+This section will guide you through setting up the project locally to begin contributing to development!
 
 ### Pre-requisites
 
-- Docker Desktop ([MAC](https://docs.docker.com/desktop/install/mac-install/) / [Windows](https://docs.docker.com/desktop/install/windows-install/) / [Linux](https://docs.docker.com/desktop/install/linux-install/))
+- Docker Desktop ([MacOS](https://docs.docker.com/desktop/install/mac-install/) / [Windows](https://docs.docker.com/desktop/install/windows-install/) / [Linux](https://docs.docker.com/desktop/install/linux-install/)) - for consistent development environment
+- [Python 3](https://www.python.org/downloads/) - for virtual environment setup and local development
+- (Optional) [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) - for easier management of the database
 
 ### 1. Clone this repository
 
-Clone this repository and move into the project directory where `docker-compose.yml` file is located
+Clone this repository and change your current directory to the root of the project, where the file, `docker-compose.yml`, is located:
+
+```powershell
+git clone https://github.com/callmegerlad/ntusu-itc-backend.git
+cd ntusu-itc-backend
+```
 
 ### 2. Build and run application using Docker
 
@@ -58,11 +73,11 @@ Build the images and start the containers with the command:
 docker-compose up --build
 ```
 
-> 📝 Note: To stop the application, hit the `CTRL` + `C` keys simultaneously in the terminal!
+> 📝 Note: To stop the application, press `CTRL` + `C` in the terminal!
 
-Your application should now be up and running at [localhost:8888](http://localhost:8888/). 
+Your application should now be running at http://localhost:8888/.
 
-### 3. Initialise database migration
+### 3. Perform database migration
 
 Using another terminal, execute the following command:
 
@@ -70,13 +85,77 @@ Using another terminal, execute the following command:
 docker exec -ti SUITC_Backend python manage.py migrate
 ```
 
-You should perform this command when it is your first time running the development environment, and anytime there are new database migrations.
+You should perform this command when:
+- setting up the development environment for the first time, or
+- there are new migration files added.
+
+### 4. Load sample data
+
+Sample data are generated using Django Fixtures. It is used to populate your database (stored in Docker Volumes):
+
+```powershell
+docker exec -ti SUITC_Backend python manage.py loaddata sample_user
+```
+
+Running this command will create a superuser account with the following credentials:
+- Username: `superuser`
+- Password: `123` 
+
+Other sample data can be seen on the fixtures folder (password for other sample user: 1048576#).
+
+> ⚠️ Warning: Running this command may overwrite some existing data!
+
+### 5. Set up development environment
+
+To start development, we will create a virtual environment on our local machine:
+
+```powershell
+python3 -m venv venv
+```
+
+To activate the virtual environment we just created, follow the instructions for your respective operating system below:
+
+#### Unix-based Systems (e.g. Linux, macOS)
+
+Use the `source` command:
+
+```powershell
+source venv/bin/activate
+```
+
+#### Windows
+
+In Command Prompt:
+
+```cmd
+venv\Scripts\activate.bat
+```
+
+In PowerShell:
+
+```powershell
+venv\Scripts\Activate.ps1
+```
+
+#### (DONT RUN THIS YET) Deactivate the Virtual Environment
+
+```powershell
+deactivate
+```
+
+### 6. Install packages in Virtual Environment
+
+Finally, install all required dependencies in our newly created virtual environment to finish setting up our local machine for development!
+
+```powershell
+pip install -r requirements.txt
+```
 
 ### Troubleshoot
 
 This section is to document any problems that might occur when running the development environment along with its solution, as we all are using different devices which might have slightly different behaviour.
 
-- Note: For Macbook M1/M2, you must run this before doing all required steps below:
+- Note: For M-series chip MacBooks, you must execute the following:
 
 ```powershell
 softwareupdate --install-rosetta
@@ -95,25 +174,13 @@ docker exec -ti SUITC_Backend python manage.py makemigrations
 
 ### Testing
 
-Everytime you add new features, please create the appropriate test cases. You can run this command to run all the test cases:
+Everytime you add new features, please create the appropriate test cases. You can run this command to run all test cases in the project:
 
 ```powershell
 docker exec -ti SUITC_Backend python manage.py test
 ```
 
 Automatic CI testing is enforced everytime a pull request or a push is done to the main branch.
-
-### Superuser & Sample Data
-
-Sample data are generated using Django Fixtures. It is used to populate your database (stored in Docker Volumes) with some sample data so that every person do not have to do it on their own manually. You can load the data by opening another terminal and run the command:
-
-```powershell
-docker exec -ti SUITC_Backend python manage.py loaddata sample_user
-```
-
-Running this command will give you superuser access with the username `superuser` and password `123`. Other sample data can be seen on the fixtures folder (password for other sample user: 1048576#).
-
-Warning: running the command may overwrite some existing data
 
 ### API Documentation
 
@@ -127,44 +194,50 @@ See some of the manual documentations here:
 
 - [Index Swapper](/docs/api-guide/index%20swapper.md)
 
+
 ## Production Deployment
 
-The live server is deployed using AWS Elastic Beanstalk (environment name: `Ntusuitcbackendprod-env`) [here](https://backend.ntusu.org/) using Python 3.8 running on Linux2 Ver 3.4.3 machine. Current database is stored using EC2 instance using MySQL (RDS is so expensive so we're not using this), static files are stored in S3 buckets. Database and S3 storage related configurations are set up through environment variables in the EB environment. SSL certificate issued through AWS certificate manager, dns using Route 53.
+Production is deployed to Google Cloud Run through Cloud Build, as configured through `cloudbuild.yaml`.
 
-In order to manually type Django manage.py commands, you have to first download [AWS EB CLI](https://github.com/aws/aws-elastic-beanstalk-cli-setup), then connect via ssh by typing `eb ssh Ntusuitcbackendprod-env`, enter secret key pair, and finally type these commands referenced [here](https://stackoverflow.com/a/71045510).
+### Deployment flow
 
-```powershell
-eb ssh
-sudo su -
-export $(cat /opt/elasticbeanstalk/deployment/env | xargs)
-source /var/app/venv/*/bin/activate
-python3 /var/app/current/manage.py <command name>
-```
+1. Build image using `docker/prod/Dockerfile`, retrieving static files from S3
+2. Push image to Artifact Registry
+3. Deploy the latest artifact from Artifact Registry to Cloud Run as a revision
 
-Important note: every time there are new migrations, please connect via ssh to perform migration in the live server (later please try to automate this process!)
+### Required environment variables
+
+The following environment variables are necessary for production deployment, to be configured in **Cloud Run**:
+
+- `PROD` = `1`
+- `PROD_HOST`
+- `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_STORAGE_BUCKET_NAME`, `EVENTS_CSV_BUCKET_NAME`
+- `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`
+- `SES_ACCESS_KEY_ID`, `SES_SECRET_ACCESS_KEY`
+
+> 📝 Note: Sensitive values should be stored securely using **Google Secret Manager**!
+
 
 ## Feature Modules
 
-### Portal
-
-### SSO
-
-### UFacility
-
-### ~~Inventory~~
+### Docs
+Hosts the manual API documentation, written as Markdown files and served through the backend. An alternative to the auto-generated Swagger UI for human-readable endpoint guides.
 
 ### Event
+Event management and check-in system for NTUSU internal events. Supports creating and managing events with configurable **access rules** (e.g. allow non-undergraduates or exchange students), auto start/end based on scheduled times, **event officers** with token-based mobile check-in, and **matric number check-in** tracking.
 
-### Docs
+### Portal
+General-purpose portal APIs. Manages **update notes** (changelog entries shown to users) and a **feedback form** system that supports bug reports, feature requests, improvement suggestions, and ITC recruitment enquiries.
 
-### StarsWar
+### SSO
+Authentication and user identity layer for the entire backend. Implements a **custom Django user model** with email-based login, JWT access/refresh token authentication, and a custom token mechanism for password reset and email verification flows.
 
-### ~~ULocker~~
+### ULocker
+Student locker booking and management system. Models **locations**, individual **lockers**, and **bookings** with allocation status tracking. Includes admin configuration, QR code generation support, and a `ULockerAdmin` role for managing the system.
 
-### Workshop
+### ~~Deprecated Modules~~
 
-### Communication
+These apps remain in the codebase for historical reference but are no longer actively maintained or exposed in production:
 
-### Games
-
-### UShop
+> UFacility, Inventory, Indexswapper, StarsWar, Workshop, Communication, Games, UShop
