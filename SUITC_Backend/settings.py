@@ -86,8 +86,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = "SUITC_Backend.urls"
 
 # DJANGO CORS HEADERS SETTINGS
-# CORS_ORIGIN_ALLOW_ALL = True # TODO - change this later
-# CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
     "Content-Type", "Authorization"
 ]
@@ -95,12 +93,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'https://backend.ntusu.org',
 ]
-
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'https://backend.ntusu.org',
-) 
-CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
@@ -142,7 +134,6 @@ PROD_HOST = os.environ.get('PROD_HOST')
 
 ALLOWED_HOSTS = []
 if PROD:
-    ALLOWED_HOSTS += ['ntusu-itc-backend.ap-southeast-1.elasticbeanstalk.com']
     ALLOWED_HOSTS += ['backend.ntusu.org']
     if PROD_HOST:
         normalized_prod_host = PROD_HOST.replace('https://', '').replace('http://', '').rstrip('/')
