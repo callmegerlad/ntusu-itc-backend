@@ -93,6 +93,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'https://backend.ntusu.org',
 ]
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
